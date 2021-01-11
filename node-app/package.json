@@ -1,0 +1,17 @@
+{
+  "name": "ezlo-mqttrelay",
+  "version": "1.0.0",
+  "description": "Example of relaying ezlo broadcast messages to mqtt",
+  "main": "index.js",
+  "scripts": {
+    "launch": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bruce B. Lacey",
+  "license": "MIT",
+  "dependencies": {
+    "@bblacey/ezlo-hub-kit": "^1.0.0-alpha.1",
+    "mqtt": "^4.2.6"
+  },
+  "devDependencies": {}
+}

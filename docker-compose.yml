@@ -1,0 +1,15 @@
+version: '3.5'
+services:
+   ezlo-mqttrelay:
+      build:
+        context: ./node-app
+      image: ezlo-mqttrelay
+      user: "node"
+      network_mode: host
+      env_file:
+        - ./config.env
+      environment:
+        - NODE_ENV=production
+      command: "node index.js"
+      container_name: ezlo-mqttrelay
+      restart: unless-stopped
