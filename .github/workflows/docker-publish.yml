@@ -1,0 +1,64 @@
+name: Docker to ghcr.io
+
+on:
+  release:
+    types: [created]
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run tests
+        run: docker-compose --file docker-compose.yml build
+
+  push:
+    needs: test
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Docker Builder
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log into GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GCR_PAT }}
+
+      - name: Setup Environment
+        run: |
+          echo "IMAGE=ghcr.io/${{ github.repository }}" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+          echo "VERSION=$(git describe --tags --abbrev=0 | sed s/^v//)" >> $GITHUB_ENV
+          echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+          echo "GIT_REF=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match)" >> $GITHUB_ENV
+
+      - name: Build image and push
+        uses: docker/build-push-action@v2
+        with:
+          context: node-app
+          labels: |
+            org.opencontainers.image.title=Ezlo-MQTTRelay
+            org.opencontainers.image.authors=bruce@blacey.com
+            org.opencontainers.image.description=Created from commit ${{ env.GIT_SHA}} and ref ${{ env.GIT_REF }}
+            org.opencontainers.image.created=${{ env.BUILD_DATE }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.ref.name=${{ env.GIT_REF }}
+            org.opencontainers.image.version=${{ env.VERSION }}
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+          push: true
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
