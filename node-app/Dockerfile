@@ -6,3 +6,5 @@ LABEL com.blacey.name="ezlo-mqttrelay"
 WORKDIR /home/node/
 COPY [ ".npmrc", "package.json", "index.js", "./" ]
 RUN npm install  
+
+CMD ["node", "index.js"]

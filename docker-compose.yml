@@ -10,6 +10,5 @@ services:
         - ./config.env
       environment:
         - NODE_ENV=production
-      command: "node index.js"
       container_name: ezlo-mqttrelay
       restart: unless-stopped
