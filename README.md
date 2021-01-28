@@ -1,5 +1,5 @@
 # Ezlo-MQTTRelay
-![Continuous Integration](https://github.com/bblacey/ezlo-mqttrelay/workflows/Continuous%20Integration/badge.svg)
+![Continuous Integration](https://github.com/bblacey/ezlo-mqttrelay/workflows/Continuous%20Integration/badge.svg)![Docker to ghcr.io](https://github.com/bblacey/ezlo-mqttrelay/workflows/Docker%20to%20ghcr.io/badge.svg)
 
 Node.js app that relays all [ui_broadcast](https://api.ezlo.com/hub/broadcasts/index.html) messages from Ezlo hubs discovered on the local area network to an MQTT broker.  The app is deployed as a self-contained docker container.
 
@@ -8,22 +8,21 @@ All messages are posted to the MQTT topic `Ezlo/<hub serial>/<msg_subclass>/<dev
 ## Motivation
 Sample off-hub app to illustrate using the [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) SDK.  
 
-This app interest Ezlo users that would like to push Ezlo controller/hub data to a time-series database (e.g. InfluxDB) for graphical reporting and analysis (e.g. Grafana).
+Ezlo users that would like to push Ezlo controller/hub data to a time-series database (e.g. InfluxDB) for graphical reporting and analysis (e.g. Grafana).
 
 ## Usage
-1. Create or download [config.env](https://raw.githubusercontent.com/bblacey/ezlo-mqttrelay/main/config.env) and edit the file to to use your MIOS portal username, password and MQTT broker URL.
-2. Start the docker image
+1. Start the dockerized MQTT Relay
 ```shell
-$ docker run --env-file config.env \
-             --network host \
-             --name ezlo-mqttrelay \
+$ docker run -it --network host \
+             --name ezlo-mqtt-relay \
+             -e miosUser=<MIOS Portal User> \
+             -e miosPassword=<MIOS Password> \
+             -e mqttBrokerUrl=<Local Broker URL> \
              ghcr.io/bblacey/ezlo-mqttrelay
 ```
-3. Verify that the application starts successfully, connects to the mqtt broker, discovers the local Ezlo hubs and receives `ui_broadcast` messages.  
+2. Verify that the application starts successfully, connects to the mqtt broker, discovers the local Ezlo hubs and receives `ui_broadcast` messages.  
     * NOTE: You can force a hub to publish a `ui_broadcast` message simply by activating a device on an Ezlo hub using the Vera application (e.g. turn a light on or off, change house mode, etc.)
 ```shell
-$ docker logs --follow ezlo-mqttrelay
-Attaching to ezlo-mqttrelay
 ezlo-mqttrelay    | connected to mqtt broker mqtt://192.168.0.104
 ezlo-mqttrelay    | Observing: 90000369, architecture: armv7l	, model: h2.1	, firmware: 2.0.7.1313.2, uptime: 0d 13h 35m 2s
 ezlo-mqttrelay    | Observing: 90000330, architecture: armv7l	, model: h2.1	, firmware: 2.0.7.1313.2, uptime: 0d 14h 50m 55s
@@ -54,15 +53,35 @@ ezlo-mqttrelay    |   }
 ezlo-mqttrelay    | }
 ```
 
-5. Confirm that the messages displayed in the docker logs reach the MQTT broker.  There are many ways to accomplish this but one simple method is to open a new terminal window and use the `mosquitto_sub` command to subscribe to the `Ezlo#` MQTT topic.  In the excerpt below, the MQTT broker is running on host 192.168.0.104.
+3. Confirm that the messages displayed in the docker logs reach the MQTT broker.  There are many ways to accomplish this but one simple method is to open a new terminal window and use the `mosquitto_sub` command to subscribe to the `Ezlo#` MQTT topic.  In the excerpt below, the MQTT broker is running on host 192.168.0.104.
 ```shell
 $ $ mosquitto_sub -t 'Ezlo/#' -v -h 192.168.0.104
 Ezlo/70060095/hub.item.updated/ZC5F00207 {"id":"ui_broadcast","msg_subclass":"hub.item.updated","msg_id":1841934316,"result":{"_id":"DA79ACF7","deviceId":"ZC5F00207","deviceName":"Landscape 1-4","deviceCategory":"dimmable_light","deviceSubcategory":"dimmable_colored","serviceNotification":false,"roomName":"Exterior","userNotification":false,"notifications":null,"name":"electric_meter_watt","valueType":"power","value":20.2,"scale":"watt","syncNotification":false}}
 ```
 
-If everything is operating correctly, `ui_broadcast` messages will appear in both the `ezlo-mqttrelay` log file and the `mosquitto_sub` terminal window simultaneously.
+If everything is operating correctly, `ui_broadcast` messages will appear in both the `ezlo-mqttrelay` docker log file and the `mosquitto_sub` terminal window simultaneously.
 
-For those users who prefer or use `docker-compose`, see the [docker-compose.yml](docker-compose.yml) available.
+At this point, you can terminate the sample run by typing control-c.
+
+### Production use
+
+To run the dockerized MQTT Relay as a persistent process you can use docker-compose (recommended) or run the docker container 'detached' as a background process.
+
+First, for either option, create or download [config.env](https://raw.githubusercontent.com/bblacey/ezlo-mqttrelay/main/config.env) and edit the file to to use your MIOS portal username, password and MQTT broker URL.
+
+#### *docker-compose* (recommended)
+For those users who prefer to use `docker-compose`, you can download the [docker-compose.yml](docker-compose.yml) and start the relay with.
+```shell
+docker-compose up -d .
+```
+#### *docker run --detatch* (alternative)
+Start the relay in detached mode.
+```shell
+$ docker run --detach --network host \
+             --name ezlo-mqtt-relay \
+             --env-file config.env \
+             ghcr.io/bblacey/ezlo-mqttrelay
+```
 
 ## The App
 Take a look at the [Source code](node-app/index.js) for the app - it is really simple and illustrates the benefits of an expressive [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) for rapid application development.
