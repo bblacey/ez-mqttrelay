@@ -1,5 +1,5 @@
 const mqtt = require('mqtt');
-const { EzloCloudResolver, discoverEzloHubs, UIBroadcastMessagePredicate } = require('@bblacey/ezlo-hub-kit');
+const { EzloCloudResolver, discoverEzloHubs, UIBroadcastMessagePredicate } = require('ezlo-hub-kit');
 
 // Shutdown in a clean manner
 process.on('SIGINT', shutdown);
