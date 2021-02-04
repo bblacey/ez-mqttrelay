@@ -1,7 +1,7 @@
 {
-  "name": "ezlo-mqttrelay",
+  "name": "ez-mqttrelay",
   "version": "1.0.0",
-  "description": "Example of relaying ezlo broadcast messages to mqtt",
+  "description": "Ezlo-Hub-Kit EZ-App that publishes all Ezlo broadcast messages to MQTT",
   "main": "index.js",
   "scripts": {
     "launch": "node index.js",
@@ -9,8 +9,17 @@
   },
   "author": "Bruce B. Lacey",
   "license": "MIT",
+  "keywords": [
+    "Ezlo",
+    "MQTT",
+    "Node",
+    "Automation",
+    "Zwave",
+    "Zigbee",
+    "ezlo-hub-kit"
+  ],
   "dependencies": {
-    "ezlo-hub-kit": "^1.0.0-alpha.5",
+    "ezlo-hub-kit": "^1.0.0-alpha.7",
     "mqtt": "^4.2.6"
   },
   "devDependencies": {}

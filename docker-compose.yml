@@ -1,11 +1,11 @@
 version: '3.5'
 services:
-   ezlo-mqttrelay:
-     image: ghcr.io/bblacey/ezlo-mqttrelay
-     env_file:
-       - ./config.env
-     environment:
-       - NODE_ENV=production
-     network_mode: host
-     container_name: ezlo-mqttrelay
-     restart: unless-stopped
+  ez-mqttrelay:
+    image: ghcr.io/bblacey/ez-mqttrelay
+    env_file:
+      - ./config.env
+    environment:
+      - NODE_ENV=production
+    network_mode: host
+    container_name: ez-mqttrelay
+    restart: unless-stopped
