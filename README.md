@@ -1,12 +1,12 @@
 # EZ-MQTTRelay
 ![Continuous Integration](https://github.com/bblacey/ez-mqttrelay/workflows/Continuous%20Integration/badge.svg)![Docker to ghcr.io](https://github.com/bblacey/ez-mqttrelay/workflows/Docker%20to%20ghcr.io/badge.svg)
 
-Easy (EZ) Node.js app that relays all [ui_broadcast](https://api.ezlo.com/hub/broadcasts/index.html) messages from Ezlo hubs discovered on the local area network to an MQTT broker.  For convenience, the app is deployed as a dockerized app.
+Easy (EZ) Node.js app that relays all [ui_broadcast](https://api.ezlo.com/hub/broadcasts/index.html) messages from Ezlo hubs discovered on the local area network to an MQTT broker.  For convenience, the app is deployed as a dockerized app for Intel/AMD and ARM platforms.
 
 All messages are posted to the MQTT topic `Ezlo/<hub serial>/<msg_subclass>/<deviceId>`
 
 ## Motivation
-Example EZ-App to illustrate the simplicity of observing Ezlo Hub `ui_broadcast` messages using the [ezlo-hub-kit](bblacey/ezlo-hub-kit) SDK.  
+Example EZ-App to illustrate the simplicity of observing Ezlo Hub `ui_broadcast` messages using the [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) SDK.  
 
 This EZ-App also appeals to Ezlo users that would like to push their Ezlo controller/hub data to a time-series database (e.g. InfluxDB) for graphical reporting and analysis (e.g. Grafana).
 
@@ -75,7 +75,7 @@ For those users who prefer to use `docker-compose`, you can download the [docker
 ```shell
 docker-compose up -d .
 ```
-Compose users may find this [GitHub gist](https://gist.github.com/bblacey/9414231d29132a1f40c38f8ec04a915d) useful.  It is a docker-compose that will start all EZ-Apps with in a single compose file.
+Compose users may find the [EZ-Apps](https://github.com/bblacey/ez-apps) github project useful.  It comprises a docker-compose file with unified config files need to run the EZ-App suite with a simple `docker-compose up -d`.
 
 #### *docker run --detatch* (alternative)
 Start the relay in detached mode.
@@ -87,16 +87,16 @@ $ docker run --detach --network host \
 ```
 
 ## The App
-Take a look at the [Source code](node-app/index.js) for the app - it is really simple and illustrates the benefits of an expressive [ezlo-hub-kit](bblacey/ezlo-hub-kit) for rapid application development.
+Take a look at the [Source code](node-app/index.js) for the app - it is really simple and illustrates the benefits of an expressive [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) for rapid application development.
 
 ## Futures
-The scope for this EZ-App was intentionally limited for this initial [ezlo-hub-kit](bblacey/ezlo-hub-kit) proof-of-concept example app but it would be very straight-forward for fellow developers to extend it and submit pull requests.  The obvious features are supporting MQTT broker authentication and extending the relay to be bi-directional (i.e. execute hub actions).
+The scope for this EZ-App was intentionally limited for this initial [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) proof-of-concept example app but it would be very straight-forward for fellow developers to extend it and submit pull requests.  The obvious features are supporting MQTT broker authentication and extending the relay to be bi-directional (i.e. execute hub actions).
 
 #### 1. MQTT Authentication
 In the interest of brevity, the example app does not include MQTT authentication but it is a straight forward extension.  Implementing this feature would simply entail adding the MQTT Broker username and password to the [config.env](config.env) file and modifying the example app to retrieve the environment variables and pass them to the MQTT broker `connect()` method.
 
 #### 2. Bi-directional relay
-Extending the ez-MQTTRelay to be bi-directional (e.g. perform hub actions) is also straight-forward because the [ezlo-hub-kit](bblacey/ezlo-hub-kit) provides methods to run scenes and control devices.
+Extending the ez-MQTTRelay to be bi-directional (e.g. perform hub actions) is also straight-forward because the [ezlo-hub-kit](https://github.com/bblacey/ezlo-hub-kit) provides methods to run scenes and control devices.
 
 The relay would need to subscribe to incoming messages using the MQTT `client.subscribe('Ezlo/#', cb())` and add a message handler using the `client.on('message', function())` method to forward the actions to the hub.  In additiona, an MQTT message scheme would need to be defined to represent hub actions.  
 
