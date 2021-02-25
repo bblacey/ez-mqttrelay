@@ -19,7 +19,7 @@
     "ezlo-hub-kit"
   ],
   "dependencies": {
-    "ezlo-hub-kit": "^1.0.0-alpha.11",
+    "ezlo-hub-kit": "^1.0.0-alpha.12",
     "mqtt": "^4.2.6"
   },
   "devDependencies": {}
