@@ -29,7 +29,7 @@ jobs:
 
       - name: Set up Docker Builder
         id: buildx
-        uses: docker/setup-buildx-action@v2.0.0
+        uses: docker/setup-buildx-action@v2.1.0
 
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
